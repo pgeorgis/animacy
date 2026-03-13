@@ -73,9 +73,9 @@ class AnimacyClassifier:
 
     def _get_model(self):
         if self.architecture == "rf":
-            return RandomForestClassifier()
+            return RandomForestClassifier(random_state=self.random_state)
         elif self.architecture == "mlp":
-            return MLPClassifier()
+            return MLPClassifier(random_state=self.random_state)
         elif self.architecture == "knn":
             return KNeighborsClassifier()
 
@@ -142,11 +142,11 @@ labels = np.concatenate([
 
 # Train and evaluate Random Forest Classifier
 rf_model = AnimacyClassifier(architecture="rf", X=all_embeddings, y=labels)
-# Precision: 0.938 | Recall: 0.877 | F1: 0.906
+# Precision: 0.939 | Recall: 0.872 | F1: 0.905
 
 # Train and evaluate Multi-Layer Perceptron Model
 mlp_model = AnimacyClassifier(architecture="mlp", X=all_embeddings, y=labels)
-# Precision: 0.956 | Recall: 0.92 | F1: 0.938
+# Precision: 0.948 | Recall: 0.928 | F1: 0.938
 
 # Train and evaluate KNNeighbors model
 knn_model = AnimacyClassifier(architecture="knn", X=all_embeddings, y=labels)
