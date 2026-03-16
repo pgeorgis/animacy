@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 class AnimacyClassifier:
     def __init__(self,
                  architecture: str,
-                 X: np.ndarray,
-                 y: np.ndarray,
+                 X: np.ndarray = None,
+                 y: np.ndarray = None,
                  test_size: float = 0.2,
                  random_state: int = 42,
                  ):
@@ -30,7 +30,8 @@ class AnimacyClassifier:
         self.random_state = random_state
         self._is_fitted = False
         self.model = self._get_model()
-        self.score = self.fit_and_evaluate(X=X, y=y, test_size=test_size, random_state=random_state)
+        if X is not None and y is not None:
+            self.score = self.fit_and_evaluate(X=X, y=y, test_size=test_size, random_state=random_state)
 
     def _get_model_architecture_name(self):
         if self.architecture == "rf":
