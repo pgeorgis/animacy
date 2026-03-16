@@ -1,6 +1,8 @@
 # Adapted from similar work by Tepei & Bloem (2024) using WordNet annotations for animacy classification in Romanian: https://github.com/mariatepei/RO-animacy/blob/main/animacy-code.ipynb
 
 import logging
+import os
+import pickle
 from typing import Generator, Iterable
 
 import numpy as np
@@ -111,6 +113,16 @@ class AnimacyClassifier:
         pred = self.model.predict(embedding)
         return pred[0]
 
+    def save(self, model_file: str):
+        model_file = os.path.abspath(model_file)
+        pickle.dump(self.model, open(model_file, 'wb'))
+        logger.info(f"Saved model to {model_file}")
+
+    def load(self, model_file: str):
+        model_file = os.path.abspath(model_file)
+        self.model = pickle.load(open(model_file, 'rb'))
+        logger.info(f"Loaded model from {model_file}")
+
 
 def get_all_hyponym_lemmas(germanet: Germanet, seed_word: str) -> set:
     lemmas = set()
@@ -154,3 +166,10 @@ mlp_model = AnimacyClassifier(architecture="mlp", X=all_embeddings, y=labels)
 knn_model = AnimacyClassifier(architecture="knn", X=all_embeddings, y=labels)
 # Precision: 0.916 | Recall: 0.917 | F1: 0.917 [Animacy seed = <Mensch>]
 # Precision: 0.899 | Recall: 0.908 | F1: 0.904 [Animacy seed = <Lebewesen>]
+
+
+# Save models to file
+animacy_model_directory = os.path.abspath(os.path.join(".", "models", "animacy"))
+rf_model.save(os.path.join(animacy_model_directory, "rf_animacy_classifier.pkl"))
+mlp_model.save(os.path.join(animacy_model_directory, "mlp_animacy_classifier.pkl"))
+knn_model.save(os.path.join(animacy_model_directory, "knn_animacy_classifier.pkl"))
