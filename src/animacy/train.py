@@ -49,18 +49,15 @@ labels = np.concatenate([
 
 # Train and evaluate Random Forest Classifier
 rf_model = AnimacyClassifier(architecture="rf", X=all_embeddings, y=labels)
-# Precision: 0.939 | Recall: 0.872 | F1: 0.905 [Animacy seed = <Mensch>]
-# Precision: 0.890 | Recall: 0.903 | F1: 0.896 [Animacy seed = <Lebewesen>]
+# Precision: 0.939 | Recall: 0.874 | F1: 0.906 [Animacy seed = <Mensch>]
 
 # Train and evaluate Multi-Layer Perceptron Model
 mlp_model = AnimacyClassifier(architecture="mlp", X=all_embeddings, y=labels)
-# Precision: 0.948 | Recall: 0.928 | F1: 0.938 [Animacy seed = <Mensch>]
-# Precision: 0.914 | Recall: 0.922 | F1: 0.918 [Animacy seed = <Lebewesen>]
+# Precision: 0.932 | Recall: 0.943 | F1: 0.938 [Animacy seed = <Mensch>]
 
 # Train and evaluate KNNeighbors model
 knn_model = AnimacyClassifier(architecture="knn", X=all_embeddings, y=labels)
-# Precision: 0.916 | Recall: 0.917 | F1: 0.917 [Animacy seed = <Mensch>]
-# Precision: 0.899 | Recall: 0.908 | F1: 0.904 [Animacy seed = <Lebewesen>]
+# Precision: 0.917 | Recall: 0.915 | F1: 0.916 [Animacy seed = <Mensch>]
 
 
 # Save models to file

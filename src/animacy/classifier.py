@@ -21,7 +21,7 @@ class AnimacyClassifier:
                  architecture: str,
                  X: np.ndarray = None,
                  y: np.ndarray = None,
-                 test_size: float = 0.2,
+                 test_size: float = 0.25,
                  random_state: int = 42,
                  ):
         self.architecture = architecture
