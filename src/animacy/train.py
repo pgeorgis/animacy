@@ -64,6 +64,11 @@ def train_animacy_classifier(
         animate_seed_word=animate_seed_word,
         inanimate_seed_word=inanimate_seed_word,
     )
+    # Remove lemmas that appear in both categories
+    overlap = animates & inanimates
+    animates = animates - overlap
+    inanimates = inanimates - overlap
+
     logger.info(f"Animate seed word: <{animate_seed_word}> ({len(animates)} lemmas)")
     logger.info(f"Inanimate seed word: <{inanimate_seed_word}> ({len(inanimates)} lemmas)")
 
