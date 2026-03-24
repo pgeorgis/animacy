@@ -1,0 +1,12 @@
+data:
+  GermaNet: ./models/animacy/GermaNet/GN_V200/GN_V200_XML
+  animate_seed: Mensch
+  inanimate_seed: Artefakt
+
+embeddings:
+  model: dbmdz/bert-base-german-cased
+  outdir: ./models/animacy/embeddings/
+ 
+classifier:
+  architecture: mlp
+  outdir: ./models/animacy/pretrained/

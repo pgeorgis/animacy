@@ -28,4 +28,5 @@ class EmbeddingsModel:
     def batch_save_embeddings(self, batch: Iterable[str], filename: str) -> np.ndarray:
         embeddings = np.vstack(list(tqdm(self.get_batch_embedding(batch), total=len(batch))))
         np.save(filename, embeddings)
+        logger.info(f"Saved embeddings to {filename}")
         return embeddings
