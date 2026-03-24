@@ -6,12 +6,13 @@ import os
 import numpy as np
 from germanetpy.germanet import Germanet
 
-from animacyClassifier import AnimacyClassifier
-from constants import (ANIMACY_MODEL_DIR, ANIMATE_EMBEDDINGS_FILE,
-                       ANIMATE_SEED_WORD, ANIMATE_TAG, EMBEDDINGS_MODEL,
-                       GERMANET_DATA, INANIMATE_EMBEDDINGS_FILE,
-                       INANIMATE_SEED_WORD, INANIMATE_TAG)
-from embeddings import EmbeddingsModel
+from constants import (ANIMATE_EMBEDDINGS_FILE, ANIMATE_SEED_WORD, ANIMATE_TAG,
+                       EMBEDDINGS_MODEL, GERMANET_DATA,
+                       INANIMATE_EMBEDDINGS_FILE, INANIMATE_SEED_WORD,
+                       INANIMATE_TAG, PRETRAINED_ANIMACY_MODEL_DIR)
+from models.embeddings import EmbeddingsModel
+
+from .animacy_classifier import AnimacyClassifier
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
@@ -61,6 +62,6 @@ knn_model = AnimacyClassifier(architecture="knn", X=all_embeddings, y=labels)
 
 
 # Save models to file
-rf_model.save(os.path.join(ANIMACY_MODEL_DIR, "rf_animacy_classifier.pkl"))
-mlp_model.save(os.path.join(ANIMACY_MODEL_DIR, "mlp_animacy_classifier.pkl"))
-knn_model.save(os.path.join(ANIMACY_MODEL_DIR, "knn_animacy_classifier.pkl"))
+rf_model.save(os.path.join(PRETRAINED_ANIMACY_MODEL_DIR, "rf_animacy_classifier.pkl"))
+mlp_model.save(os.path.join(PRETRAINED_ANIMACY_MODEL_DIR, "mlp_animacy_classifier.pkl"))
+knn_model.save(os.path.join(PRETRAINED_ANIMACY_MODEL_DIR, "knn_animacy_classifier.pkl"))
