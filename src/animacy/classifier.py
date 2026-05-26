@@ -30,10 +30,11 @@ class AnimacyClassifier:
         self.random_state = random_state
         self._is_fitted = False
         self.model = self._get_model()
+        self.encoder: EmbeddingsModel = None
         if X is not None and y is not None:
             self.score = self.fit_and_evaluate(X=X, y=y, test_size=test_size, random_state=random_state)
 
-    def _get_model_architecture_name(self):
+    def _get_model_architecture_name(self) -> str:
         if self.architecture == "rf":
             return "Random Forest"
         elif self.architecture == "mlp":
@@ -77,18 +78,30 @@ class AnimacyClassifier:
         self.fit(X_train, y_train)
         return self.evaluate(X_test, y_test)
     
-    def classify(self, word: str, embedding_model: EmbeddingsModel) -> str:
-        embedding = embedding_model.get_word_embedding(word)
+    def classify(self,
+                 word: str,
+                 encoder: EmbeddingsModel = None,
+                 ) -> str:
+        if encoder is None:
+            # Use pre-loaded self.encoder if available and encoder is unspecified
+            encoder = self.encoder
+        if encoder is None:
+            raise ValueError("`encoder` unspecified and no default encoder loaded into AnimacyClassifier!")
+        embedding = encoder.get_word_embedding(word)
         embedding = embedding.reshape(1, -1)
         pred = self.model.predict(embedding)
         return pred[0]
 
-    def save(self, model_file: str):
-        model_file = os.path.abspath(model_file)
-        pickle.dump(self.model, open(model_file, 'wb'))
-        logger.info(f"Saved model to {model_file}")
+    def save(self, model_path: str) -> None:
+        model_path = os.path.abspath(model_path)
+        pickle.dump(self.model, open(model_path, 'wb'))
+        logger.info(f"Saved model to {model_path}")
 
-    def load(self, model_file: str):
-        model_file = os.path.abspath(model_file)
-        self.model = pickle.load(open(model_file, 'rb'))
-        logger.info(f"Loaded model from {model_file}")
+    def load(self, model_path: str) -> None:
+        model_path = os.path.abspath(model_path)
+        self.model = pickle.load(open(model_path, 'rb'))
+        logger.info(f"Loaded model from {model_path}")
+
+    def load_encoder(self, embeddings_model_path: str) -> None:
+        self.encoder = EmbeddingsModel(embeddings_model_path)
+        logger.info(f"Loaded encoder model from {embeddings_model_path}")
