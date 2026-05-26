@@ -36,13 +36,13 @@ def get_all_hyponym_lemmas(germanet_data: Germanet, seed_word: str) -> set:
     return lemmas
 
 
-def get_animacy_lemmas(germanet_data: Germanet, 
-                       animate_seed_word: str,
-                       inanimate_seed_word: str
+def get_animacy_lemmas(germanet_data: Germanet,
+                       animate_seed_word: str = DEFAULT_ANIMATE_SEED_WORD,
+                       inanimate_seed_word: str = DEFAULT_INANIMATE_SEED_WORD,
                        ) -> tuple[set, set]:
     """Get sets of animate and inanimate lemmas from seed words."""
-    animates = get_all_hyponym_lemmas(germanet_data, seed_word=DEFAULT_ANIMATE_SEED_WORD)
-    inanimates = get_all_hyponym_lemmas(germanet_data, seed_word=DEFAULT_INANIMATE_SEED_WORD)
+    animates = get_all_hyponym_lemmas(germanet_data, seed_word=animate_seed_word)
+    inanimates = get_all_hyponym_lemmas(germanet_data, seed_word=inanimate_seed_word)
     return animates, inanimates
 
 
