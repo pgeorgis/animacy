@@ -7,8 +7,8 @@ import os
 import numpy as np
 from germanetpy.germanet import Germanet
 
-from constants import (ANIMACY_MODEL_DIR, ANIMATE_TAG, EMBEDDINGS_MODEL,
-                       GERMANET_DATA, INANIMATE_TAG,
+from constants import (ANIMACY_MODEL_DIR, ANIMATE_TAG,
+                       DEFAULT_EMBEDDINGS_MODEL, GERMANET_DATA, INANIMATE_TAG,
                        PRETRAINED_ANIMACY_MODEL_DIR)
 from models.embeddings import EmbeddingsModel
 from utils import load_config
@@ -50,7 +50,7 @@ def train_animacy_classifier(
         germanet_data_path: str = GERMANET_DATA,
         animate_seed_word: str = DEFAULT_ANIMATE_SEED_WORD,
         inanimate_seed_word: str = DEFAULT_INANIMATE_SEED_WORD,
-        embeddings_model: str = EMBEDDINGS_MODEL,
+        embeddings_model: str = DEFAULT_EMBEDDINGS_MODEL,
         embeddings_outdir: str = ANIMACY_EMBEDDINGS,
         model_architecture: str = DEFAULT_ANIMACY_CLASSIFIER_ARCHITECTURE,
         classifier_outdir: str = PRETRAINED_ANIMACY_MODEL_DIR,
@@ -114,7 +114,7 @@ def main(config):
         germanet_data_path=config.get("data", {}).get("GermaNet", GERMANET_DATA),
         animate_seed_word=config.get("data", {}).get("animate_seed", DEFAULT_ANIMATE_SEED_WORD),
         inanimate_seed_word=config.get("data", {}).get("inanimate_seed", DEFAULT_INANIMATE_SEED_WORD),
-        embeddings_model=config.get("embeddings", {}).get("model", EMBEDDINGS_MODEL),
+        embeddings_model=config.get("embeddings", {}).get("model", DEFAULT_EMBEDDINGS_MODEL),
         embeddings_outdir=config.get("embeddings", {}).get("outdir", ANIMACY_EMBEDDINGS),
         model_architecture=config.get("classifier", {}).get("architecture", DEFAULT_ANIMACY_CLASSIFIER_ARCHITECTURE),
         classifier_outdir=config.get("classifier", {}).get("outdir", PRETRAINED_ANIMACY_MODEL_DIR),
