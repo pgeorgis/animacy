@@ -10,7 +10,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
 from constants import ANIMATE_TAG
-from models.embeddings import EmbeddingsModel
+from models.embeddings import EmbeddingsModel, init_embeddings_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
@@ -103,5 +103,5 @@ class AnimacyClassifier:
         logger.info(f"Loaded model from {model_path}")
 
     def load_encoder(self, embeddings_model_path: str) -> None:
-        self.encoder = EmbeddingsModel(embeddings_model_path)
+        self.encoder = init_embeddings_model(embeddings_model_path)
         logger.info(f"Loaded encoder model from {embeddings_model_path}")

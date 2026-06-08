@@ -46,3 +46,19 @@ class FastTextEmbeddingsModel(EmbeddingsModel):
     
     def get_word_embedding(self, word: str) -> np.ndarray:
         return self.model[word]
+
+
+def is_fasttext(model_id: str) -> bool:
+    """Returns True or False, according to whether the specified model ID is a fastText model."""
+    if "fasttext" in model_id:
+        return True
+    if model_id.startswith("facebook"):  # e.g. facebook/fasttext-de-vectors
+        return True
+    return False
+
+
+def init_embeddings_model(model_id: str) -> EmbeddingsModel | FastTextEmbeddingsModel:
+    """Loads and initializes the appropriate embeddings model class by model ID."""
+    if is_fasttext(model_id):
+        return FastTextEmbeddingsModel(model_id)
+    return EmbeddingsModel(model_id)

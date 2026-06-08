@@ -10,7 +10,7 @@ from germanetpy.germanet import Germanet
 from constants import (ANIMACY_MODEL_DIR, ANIMATE_TAG,
                        DEFAULT_EMBEDDINGS_MODEL, GERMANET_DATA, INANIMATE_TAG,
                        PRETRAINED_ANIMACY_MODEL_DIR)
-from models.embeddings import EmbeddingsModel, FastTextEmbeddingsModel
+from models.embeddings import EmbeddingsModel, init_embeddings_model
 from utils import load_config
 
 from .animacy_classifier import AnimacyClassifier
@@ -74,12 +74,7 @@ def train_animacy_classifier(
 
     # Load embedding model
     embeddings_model_name = embeddings_model
-    if embeddings_model.startswith("facebook"):  # NB: fastText model, e.g. facebook/fasttext-de-vectors
-        logger.info(f"Using fastText embeddings model: {embeddings_model_name}")
-        embeddings_model = FastTextEmbeddingsModel(name=embeddings_model)
-    else:
-        logger.info(f"Using embeddings model: {embeddings_model_name}")
-        embeddings_model = EmbeddingsModel(name=embeddings_model)
+    embeddings_model: EmbeddingsModel = init_embeddings_model(embeddings_model_name)
 
     # Check whether embeddings were already generated for the specified embedding model and seed words
     # If so, load the preloaded embeddings; else generate from scratch
