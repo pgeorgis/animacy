@@ -4,7 +4,7 @@ data:
   inanimate_seed: Artefakt
 
 embeddings:
-  model: dbmdz/bert-base-german-cased
+  model: facebook/fasttext-de-vectors
   outdir: ./models/animacy/embeddings/
  
 classifier:

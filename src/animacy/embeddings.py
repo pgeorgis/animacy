@@ -1,8 +1,10 @@
 import logging
 from typing import Generator, Iterable
 
+import fasttext
 import numpy as np
 import torch
+from huggingface_hub import hf_hub_download
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 
@@ -30,3 +32,17 @@ class EmbeddingsModel:
         np.save(filename, embeddings)
         logger.info(f"Saved embeddings to {filename}")
         return embeddings
+
+
+class FastTextEmbeddingsModel(EmbeddingsModel):
+    def __init__(self, name: str):
+        self.name = name
+        self.model = self.load_model()
+
+    def load_model(self):
+        logger.info(f"Loading fastText embedding model <{self.name}>")
+        model_path = hf_hub_download(repo_id=self.name, filename="model.bin")
+        return fasttext.load_model(model_path)
+    
+    def get_word_embedding(self, word: str) -> np.ndarray:
+        return self.model[word]
