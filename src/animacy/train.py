@@ -7,11 +7,11 @@ import os
 import numpy as np
 from germanetpy.germanet import Germanet
 
-from constants import (ANIMACY_MODEL_DIR, ANIMATE_TAG,
-                       DEFAULT_EMBEDDINGS_MODEL, GERMANET_DATA, INANIMATE_TAG,
-                       PRETRAINED_ANIMACY_MODEL_DIR)
+from constants.models import (ANIMACY_MODEL_DIR, DEFAULT_EMBEDDINGS_MODEL,
+                              GERMANET_DATA, PRETRAINED_ANIMACY_MODEL_DIR)
+from constants.tags import ANIMATE_TAG, INANIMATE_TAG
 from models.embeddings import EmbeddingsModel, init_embeddings_model
-from utils import load_config
+from utils.utils import load_config
 
 from .animacy_classifier import AnimacyClassifier
 

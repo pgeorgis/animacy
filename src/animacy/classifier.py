@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
-from constants import ANIMATE_TAG
+from constants.tags import ANIMATE_TAG
 from models.embeddings import EmbeddingsModel, init_embeddings_model
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
