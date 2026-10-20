@@ -1,6 +1,6 @@
 # Animacy
 
-Binary animacy classification (animate `AN` vs. inanimate `INAN`) of nouns from word embeddings. Currently implemented for German but could be adapted for other languages. Originally developed for the [D-pronoun corpus annotation project](https://github.com/SFB1252/c07-dpron-korpus), where it annotates the animacy of pronoun coreferents and clausemates.
+Binary animacy classification (animate `AN` vs. inanimate `INAN`) of nouns from word embeddings. Currently implemented for German but could be adapted for other languages. Originally developed for a [German corpus study of pronouns](https://github.com/SFB1252/c07-dpron-korpus) within the [CRC 1252](https://sfb1252.uni-koeln.de/en/) at the University of Cologne (Universität zu Köln), Germany.
 
 ```python
 from animacy import AnimacyClassifier
@@ -70,7 +70,7 @@ uv run python -m animacy.train --config configs/animacy_config.yml
 ```
 The config file specifies the GermaNet location, the seed words, the embeddings model, and the classifier architecture. Paths are relative to the working directory:
 * embeddings of the extracted lemma sets are cached under `embeddings/<embeddings model>/<class>/<seed>/word_embeddings.npy` and re-used in later runs for the same model and seed words;
-* the trained classifier is saved as `pretrained/<model_name>.pkl`.
+* the trained classifier is saved to the path given by `classifier.outfile` in the config file (path *and* file name, e.g. `./pretrained/my_classifier.pkl`). If omitted, it defaults to `pretrained/<architecture>_animacy_classifier.pkl`. The output path can also be given (and overrides the config) on the command line with `--output`.
 
 #### GermaNet
 Semantic sets including synonyms, hyponyms, and hypernyms are drawn from [`GermaNet`](https://uni-tuebingen.de/en/faculties/faculty-of-humanities/departments/modern-languages/department-of-linguistics/chairs/general-and-computational-linguistics/ressources/lexica/germanet/), a lexical-semantic resource for German similar to [`WordNet`](https://wordnet.princeton.edu/) developed at the University of Tübingen. 
