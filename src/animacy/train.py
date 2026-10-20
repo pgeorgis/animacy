@@ -7,23 +7,29 @@ import os
 import numpy as np
 from germanetpy.germanet import Germanet
 
-from constants.models import (ANIMACY_MODEL_DIR, DEFAULT_EMBEDDINGS_MODEL,
-                              GERMANET_DATA, PRETRAINED_ANIMACY_MODEL_DIR)
-from constants.tags import ANIMATE_TAG, INANIMATE_TAG
-from models.embeddings import EmbeddingsModel, init_embeddings_model
-from utils.utils import load_config
+from .classifier import AnimacyClassifier
+from .constants import (ANIMATE_TAG, DEFAULT_ANIMATE_SEED_WORD,
+                        DEFAULT_ARCHITECTURE, DEFAULT_CLASSIFIER_OUTDIR,
+                        DEFAULT_EMBEDDINGS_MODEL, DEFAULT_EMBEDDINGS_OUTDIR,
+                        DEFAULT_GERMANET_DIR, DEFAULT_INANIMATE_SEED_WORD,
+                        INANIMATE_TAG)
+from .embeddings import EmbeddingsModel, init_embeddings_model
+from .paths import classifier_filename
 
-from .animacy_classifier import AnimacyClassifier
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
-# Path to saved embeddings of animate and inanimate nouns
-ANIMACY_EMBEDDINGS = os.path.join(ANIMACY_MODEL_DIR, "embeddings")
-DEFAULT_ANIMACY_CLASSIFIER_ARCHITECTURE = "mlp"
-# Default seed words for animate and inanimate classes
-DEFAULT_ANIMATE_SEED_WORD = "Mensch"  #  Alternative: <Lebewesen>, will include more non-human animals and plants as animate vs. only humans
-DEFAULT_INANIMATE_SEED_WORD = "Artefakt"
+# Locations (relative to the working directory) of GermaNet data, saved embeddings of animate
+# and inanimate nouns, and the trained classifiers
+GERMANET_DATA = DEFAULT_GERMANET_DIR
+ANIMACY_EMBEDDINGS = DEFAULT_EMBEDDINGS_OUTDIR
+PRETRAINED_ANIMACY_MODEL_DIR = DEFAULT_CLASSIFIER_OUTDIR
+DEFAULT_ANIMACY_CLASSIFIER_ARCHITECTURE = DEFAULT_ARCHITECTURE
+
+
+def load_config(config_path: str) -> dict:
+    import yaml
+    with open(config_path, 'r') as f:
+        return yaml.safe_load(f) or {}
 
 
 def get_all_hyponym_lemmas(germanet_data: Germanet, seed_word: str) -> set:
@@ -53,8 +59,15 @@ def train_animacy_classifier(
         embeddings_model: str = DEFAULT_EMBEDDINGS_MODEL,
         embeddings_outdir: str = ANIMACY_EMBEDDINGS,
         model_architecture: str = DEFAULT_ANIMACY_CLASSIFIER_ARCHITECTURE,
-        classifier_outdir: str = PRETRAINED_ANIMACY_MODEL_DIR,
+        classifier_outfile: str = None,
         ):
+    """Train an animacy classifier from GermaNet semantic sets and save it.
+
+    classifier_outfile: path (including file name) where the trained classifier is saved.
+        Defaults to <PRETRAINED_ANIMACY_MODEL_DIR>/<architecture>_animacy_classifier.pkl.
+    """
+    if classifier_outfile is None:
+        classifier_outfile = os.path.join(PRETRAINED_ANIMACY_MODEL_DIR, classifier_filename(model_architecture))
     # Load GermaNet data
     germanet_data = Germanet(os.path.abspath(germanet_data_path))
 
@@ -103,12 +116,11 @@ def train_animacy_classifier(
     model = AnimacyClassifier(architecture=model_architecture, X=all_embeddings, y=labels)
 
     # Save model to file
-    classifier_outdir = os.path.abspath(classifier_outdir)
-    model.save(os.path.join(classifier_outdir, f"{model_architecture}_animacy_classifier.pkl"))
+    model.save(classifier_outfile)
 
 
-def main(config):
-    config = load_config(config)
+def main(config=None, output=None):
+    config = load_config(config) if config else {}
     train_animacy_classifier(
         germanet_data_path=config.get("data", {}).get("GermaNet", GERMANET_DATA),
         animate_seed_word=config.get("data", {}).get("animate_seed", DEFAULT_ANIMATE_SEED_WORD),
@@ -116,12 +128,14 @@ def main(config):
         embeddings_model=config.get("embeddings", {}).get("model", DEFAULT_EMBEDDINGS_MODEL),
         embeddings_outdir=config.get("embeddings", {}).get("outdir", ANIMACY_EMBEDDINGS),
         model_architecture=config.get("classifier", {}).get("architecture", DEFAULT_ANIMACY_CLASSIFIER_ARCHITECTURE),
-        classifier_outdir=config.get("classifier", {}).get("outdir", PRETRAINED_ANIMACY_MODEL_DIR),
+        classifier_outfile=output or config.get("classifier", {}).get("outfile"),
     )
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
     parser = argparse.ArgumentParser("Trains and saves a binary animacy classifier.")
     parser.add_argument('--config', default=None, help='Path to config.yml file')
+    parser.add_argument('--output', default=None, help='Path to output trained classifier model; overrides `classifier.outfile` in the config file')
     args = parser.parse_args()
-    main(args.config)
+    main(args.config, output=args.output)

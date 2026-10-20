@@ -9,10 +9,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 
-from constants.tags import ANIMATE_TAG
-from models.embeddings import EmbeddingsModel, init_embeddings_model
+from .constants import (ANIMATE_TAG, DEFAULT_ARCHITECTURE,
+                        DEFAULT_EMBEDDINGS_MODEL)
+from .embeddings import EmbeddingsModel, init_embeddings_model
+from .paths import find_classifier
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 
@@ -94,14 +95,42 @@ class AnimacyClassifier:
 
     def save(self, model_path: str) -> None:
         model_path = os.path.abspath(model_path)
-        pickle.dump(self.model, open(model_path, 'wb'))
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+        with open(model_path, 'wb') as f:
+            pickle.dump(self.model, f)
         logger.info(f"Saved model to {model_path}")
 
     def load(self, model_path: str) -> None:
         model_path = os.path.abspath(model_path)
-        self.model = pickle.load(open(model_path, 'rb'))
+        with open(model_path, 'rb') as f:
+            self.model = pickle.load(f)
+        self._is_fitted = True
         logger.info(f"Loaded model from {model_path}")
 
     def load_encoder(self, embeddings_model_path: str) -> None:
         self.encoder = init_embeddings_model(embeddings_model_path)
         logger.info(f"Loaded encoder model from {embeddings_model_path}")
+
+    @classmethod
+    def from_pretrained(cls,
+                        architecture: str = DEFAULT_ARCHITECTURE,
+                        model_path: str = None,
+                        encoder: str | EmbeddingsModel | None = DEFAULT_EMBEDDINGS_MODEL,
+                        ) -> "AnimacyClassifier":
+        """Load a trained classifier together with its word embeddings encoder.
+
+        Args:
+            architecture: 'rf', 'mlp', or 'knn'.
+            model_path: Path to a classifier .pkl file. If None, the classifier is looked up
+                in $ANIMACY_MODEL_DIR and then among the classifiers packaged with the library.
+            encoder: Hugging Face ID of the embeddings model to load, an already-loaded
+                embeddings model, or None to load no encoder (then `classify` must be
+                passed an `encoder`).
+        """
+        classifier = cls(architecture=architecture)
+        classifier.load(model_path if model_path is not None else find_classifier(architecture))
+        if isinstance(encoder, str):
+            classifier.load_encoder(encoder)
+        else:
+            classifier.encoder = encoder
+        return classifier

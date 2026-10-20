@@ -1,12 +1,15 @@
+# Training configuration for the animacy classifier (paths are relative to the working directory)
 data:
-  GermaNet: ./models/animacy/GermaNet/GN_V200/GN_V200_XML
+  GermaNet: ./GermaNet/GN_V200/GN_V200_XML
   animate_seed: Mensch
   inanimate_seed: Artefakt
 
 embeddings:
   model: facebook/fasttext-de-vectors
-  outdir: ./models/animacy/embeddings/
- 
+  outdir: ./embeddings/
+
 classifier:
   architecture: mlp
-  outdir: ./models/animacy/pretrained/
+  # Path (including file name) where the trained classifier is saved
+  # Default if omitted: ./pretrained/<architecture>_animacy_classifier.pkl
+  outfile: ./pretrained/mlp_animacy_classifier.pkl

@@ -1,0 +1,43 @@
+[project]
+name = "animacy"
+version = "0.1.0"
+description = "Animacy classification (animate vs. inanimate) of German nouns from word embeddings, with classifiers trained on GermaNet semantic sets."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "numpy<2.0",
+    "scikit-learn>=1.8,<1.9",
+    "fasttext==0.9.3",
+    "huggingface-hub>=1.0",
+    "tqdm>=4.66",
+    "setuptools<81",
+]
+
+[project.optional-dependencies]
+# Transformer-based (e.g. BERT) word embeddings instead of fastText
+bert = [
+    "torch>=2.2",
+    "transformers>=4.40",
+]
+# Training new classifiers from GermaNet
+train = [
+    "germanetpy==0.2.5",
+    "PyYAML>=6.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+animacy = ["models/*.pkl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["fasttext: needs the fastText embeddings model (downloaded from the Hugging Face Hub on first use)"]

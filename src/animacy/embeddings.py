@@ -1,32 +1,31 @@
 import logging
 from typing import Generator, Iterable
 
-import fasttext
 import numpy as np
-import torch
 from huggingface_hub import hf_hub_download
 from tqdm import tqdm
-from transformers import AutoModel, AutoTokenizer
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 
 class EmbeddingsModel:
+    """Contextual (transformer) word embeddings. Requires the optional `bert` extra (torch, transformers)."""
     def __init__(self, name: str):
+        from transformers import AutoModel, AutoTokenizer
         self.name = name
         self.model = AutoModel.from_pretrained(name)
         self.tokenizer = AutoTokenizer.from_pretrained(name)
 
     def get_word_embedding(self, word: str) -> np.ndarray:
+        import torch
         inputs = self.tokenizer(word, return_tensors="pt")
         with torch.no_grad():
             outputs = self.model(**inputs)
         return outputs.last_hidden_state[0,1].numpy()
-    
+
     def get_batch_embedding(self, batch: Iterable[str]) -> Generator:
         return (self.get_word_embedding(word) for word in batch)
-    
+
     def batch_save_embeddings(self, batch: Iterable[str], filename: str) -> np.ndarray:
         embeddings = np.vstack(list(tqdm(self.get_batch_embedding(batch), total=len(batch))))
         np.save(filename, embeddings)
@@ -40,10 +39,11 @@ class FastTextEmbeddingsModel(EmbeddingsModel):
         self.model = self.load_model()
 
     def load_model(self):
+        import fasttext
         logger.info(f"Loading fastText embedding model <{self.name}>")
         model_path = hf_hub_download(repo_id=self.name, filename="model.bin")
         return fasttext.load_model(model_path)
-    
+
     def get_word_embedding(self, word: str) -> np.ndarray:
         return self.model[word]
 

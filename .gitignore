@@ -1,0 +1,12 @@
+.venv/
+.DS_Store
+__pycache__/
+*.egg-info/
+.pytest_cache/
+
+# GermaNet dataset (licensed; must NOT be redistributed)
+GermaNet/
+
+# Training outputs
+embeddings/
+pretrained/
