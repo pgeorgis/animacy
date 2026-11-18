@@ -46,6 +46,7 @@ As a development environment:
 ```bash
 uv sync                  # inference only
 uv sync --extra train    # also the dependencies for training new classifiers
+uv run pytest            # run tests
 ```
 
 Optional extras: `bert` (torch and transformers, for transformer-based instead of fastText embeddings) and `train` (see [Training](#training)).
@@ -87,3 +88,4 @@ GermaNet is only needed to train a German animacy classifier, not to use a pretr
     * [`paths.py`](./src/animacy/paths.py), [`constants.py`](./src/animacy/constants.py): classifier file lookup, class labels, and defaults.
     * [`models/`](./src/animacy/models/): the packaged default pretrained classifier for German.
 * [`configs/animacy_config.yml`](./configs/animacy_config.yml): example training configuration.
+* [`tests/`](./tests/)
